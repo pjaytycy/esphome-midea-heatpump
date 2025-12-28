@@ -81,10 +81,13 @@ logger:
 
 # Enable Home Assistant API
 api:
+  reboot_timeout: 24h
 
 web_server:
   port: 80
   version: 3
+
+prometheus:
 
 ota:
   platform: esphome
