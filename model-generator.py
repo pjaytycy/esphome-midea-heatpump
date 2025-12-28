@@ -180,6 +180,18 @@ def resolve_inheritance_chain(model_file, override_dir):
         return [overrides]
 
 
+def add_package_import(merged_data, model_name):
+    if not "dashboard_import" in merged_data:
+        print(f"dashboard_import not found in {merged_data.keys()}")
+        return
+    dashboard_import = merged_data["dashboard_import"]
+    if not "package_import_url" in dashboard_import:
+        print("package_import_url not found in {diu.keys()}")
+        return
+    piu = dashboard_import["package_import_url"].replace("${model_name}", model_name)
+    dashboard_import["package_import_url"] = piu
+
+
 def main():
     base_file = "source/heatpump-base.yaml"
     override_dir = "source/models"
@@ -201,6 +213,8 @@ def main():
         merged_data = base_data
         for overrides in inheritance_chain:
             merged_data = apply_overrides(merged_data, overrides)
+
+        add_package_import(merged_data, model_name)
 
         output_file = os.path.join(output_dir, f"{model_name}.yaml")
         save_yaml(merged_data, output_file)

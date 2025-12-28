@@ -58,6 +58,7 @@ globals:
 
 esphome:
   name: "${devicename}"
+  name_add_mac_suffix: true
   comment: "${description}"
   friendly_name: "${description}"
   project:
@@ -68,6 +69,10 @@ esp32:
   board: esp32dev
   framework:
     type: esp-idf
+
+dashboard_import:
+  package_import_url: github://svenar-iot/esphome-midea-heatpump/models/${model_name}.yaml
+  import_full_config: false
 
 # Enable logging
 logger:
@@ -356,6 +361,8 @@ sensor:
     name: Uptime
     id: "${devicename}_uptime"
     icon: mdi:timelapse
+  - platform: wifi_signal
+    name: "WiFi Signal Strength"
   - platform: template
     name: "Coefficient of Performance"
     id: "${devicename}_coefficient_of_performance"
@@ -778,8 +785,9 @@ sensor:
     unit_of_measurement: A
     device_class: "current"
     state_class: "measurement"
-    filters:
-      - multiply: 0.1
+    # TODO: not sure about adding a *0.1 filter below, might be linked to specific model(s)
+    # filters:
+    #   - multiply: 0.1
   # Register: 134
   - platform: modbus_controller
     modbus_controller_id: "${devicename}"
@@ -1219,6 +1227,13 @@ sensor:
       }
 
 binary_sensor:
+  - platform: gpio
+    pin: GPIO22
+    id: factory_reset_button
+    name: "Factory Reset Button"
+    on_press:
+      then:
+        - switch.turn_on: ${devicename}_restart_with_factory_default_settings
   - platform: template
     name: "Compressor Running"
     id: compressor_running
@@ -4259,6 +4274,10 @@ text_sensor:
     id: "${devicename}_esphome_version"
     icon: mdi:information
     hide_timestamp: true
+  - platform: wifi_info
+    mac_address:
+      name: ESP Mac Wifi Address
+      id: wifi_mac_address
   # Active State
   - platform: template
     name: "Active State"
