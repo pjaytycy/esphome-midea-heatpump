@@ -800,7 +800,6 @@ sensor:
     register_type: holding
     address: 0x8b
     value_type: U_WORD
-    unit_of_measurement: "kW"
   - platform: modbus_controller
     modbus_controller_id: "${devicename}"
     name: "Ability Of Hydraulic Module"
@@ -4364,6 +4363,7 @@ interval:
           - output.turn_on: green_led_out
           - delay: 500ms
           - output.turn_off: green_led_out
+
   - interval: 500ms
     then:
       if:
@@ -4373,14 +4373,14 @@ interval:
           - output.turn_off: orange_led_out
         else:
           - if:
-              condition:
-                wifi.connected
+              condition: wifi.connected
               then:
                 - output.turn_on: orange_led_out
                 - delay: 250ms
                 - output.turn_off: orange_led_out
               else:
                 - output.turn_off: orange_led_out
+
   - interval: 1h
     then:
       - lambda: |-
